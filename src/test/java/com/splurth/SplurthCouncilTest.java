@@ -119,7 +119,7 @@ public class SplurthCouncilTest
         Assert.assertEquals(actualSymbol, expectedSymbol);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testFirstValidSymbolAlphabeticallyShouldThrowException()
     {
         splurthCouncil.getFirstSymbolAlphabetically(INVALID_CHEMICAL_NAME);
@@ -152,7 +152,7 @@ public class SplurthCouncilTest
         Assert.assertEquals(actualNumberOfSymbols, expectedNumberOfSymbols);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testNumberOfDistinctSymbolsShouldThrowException()
     {
         splurthCouncil.getNumberOfDistinctSymbols(INVALID_CHEMICAL_NAME);

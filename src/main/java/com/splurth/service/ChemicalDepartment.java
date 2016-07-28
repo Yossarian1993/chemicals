@@ -1,6 +1,7 @@
 package com.splurth.service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import com.splurth.model.ChemicalElement;
@@ -29,13 +30,13 @@ public class ChemicalDepartment
 
         if (isNameInvalid(name))
         {
-            throw new IllegalStateException("The name does not meet the requirements");
+            throw new IllegalArgumentException("The name does not meet the requirements");
         }
 
         int lastValidPositionForTheFirstCharacter = name.length() - 1;
 
-        int firstCharacterPosition = getAlphabeticallyFirstCharacterInNameBetween(name, 0, lastValidPositionForTheFirstCharacter);
-        int secondCharacterPosition = getAlphabeticallyFirstCharacterInNameBetween(name, firstCharacterPosition + 1, name.length());
+        int firstCharacterPosition = getAlphabeticallyFirstCharacter(name, 0, lastValidPositionForTheFirstCharacter);
+        int secondCharacterPosition = getAlphabeticallyFirstCharacter(name, firstCharacterPosition + 1, name.length());
 
         return getSymbolByPositions(name, firstCharacterPosition, secondCharacterPosition);
     }
@@ -46,7 +47,7 @@ public class ChemicalDepartment
 
         if (isNameInvalid(name))
         {
-            throw new IllegalStateException("The name does not meet the requirements");
+            throw new IllegalArgumentException("The name does not meet the requirements");
         }
 
         Set<String> symbols = new HashSet<>();
@@ -64,15 +65,19 @@ public class ChemicalDepartment
 
     private boolean isNameInvalid(String name)
     {
-        return name == null || !name.matches(NAME_REQUIREMENTS_REGEX);
+        return Optional.ofNullable(name)
+                       .map(string -> !string.matches(NAME_REQUIREMENTS_REGEX))
+                       .orElse(true);
     }
 
     private boolean isSymbolInvalid(String symbol)
     {
-        return symbol == null || !symbol.matches(SYMBOL_REQUIREMENTS_REGEX);
+        return Optional.ofNullable(symbol)
+                       .map(string -> !string.matches(SYMBOL_REQUIREMENTS_REGEX))
+                       .orElse(true);
     }
 
-    private int getAlphabeticallyFirstCharacterInNameBetween(String name, int from, int to)
+    private int getAlphabeticallyFirstCharacter(String name, int from, int to)
     {
         name = name.toLowerCase();
 
