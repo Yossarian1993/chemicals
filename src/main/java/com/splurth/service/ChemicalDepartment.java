@@ -1,8 +1,10 @@
 package com.splurth.service;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import com.splurth.model.ChemicalElement;
 
@@ -35,8 +37,8 @@ public class ChemicalDepartment
 
         int lastValidPositionForTheFirstCharacter = name.length() - 1;
 
-        int firstCharacterPosition = getAlphabeticallyFirstCharacter(name, 0, lastValidPositionForTheFirstCharacter);
-        int secondCharacterPosition = getAlphabeticallyFirstCharacter(name, firstCharacterPosition + 1, name.length());
+        int firstCharacterPosition = getPositionOfAlphabeticallyFirstCharacter(name, 0, lastValidPositionForTheFirstCharacter);
+        int secondCharacterPosition = getPositionOfAlphabeticallyFirstCharacter(name, firstCharacterPosition + 1, name.length());
 
         return getSymbolByPositions(name, firstCharacterPosition, secondCharacterPosition);
     }
@@ -60,6 +62,19 @@ public class ChemicalDepartment
             }
         }
 
+/*      Java 8 magic solution without explicit for loop
+
+        IntStream.range(0, name.length() - 1)
+                 .boxed()
+                 .forEach(i ->
+                         IntStream.range(i + 1, name.length())
+                                .boxed()
+                                .forEach(
+                                        j -> symbols.add(getSymbolByPositions(name, i, j))
+                                )
+                 );
+*/
+
         return symbols.size();
     }
 
@@ -77,22 +92,15 @@ public class ChemicalDepartment
                        .orElse(true);
     }
 
-    private int getAlphabeticallyFirstCharacter(String name, int from, int to)
+    private int getPositionOfAlphabeticallyFirstCharacter(String name, int from, int to)
     {
         name = name.toLowerCase();
 
-        int min = name.charAt(from);
-        int minIndex = from;
+        Integer minIndex = IntStream.range(from, to)
+                                   .boxed()
+                                   .min(Comparator.comparingInt(name::charAt))
+                                   .orElse(-1);
 
-        for (int i = from + 1; i < to; i++)
-        {
-            char letter = name.charAt(i);
-            if (letter < min)
-            {
-                min = letter;
-                minIndex = i;
-            }
-        }
         return minIndex;
     }
 
